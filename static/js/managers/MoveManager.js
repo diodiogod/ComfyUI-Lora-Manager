@@ -8,6 +8,7 @@ import { FolderTreeManager } from '../components/FolderTreeManager.js';
 import { sidebarManager } from '../components/SidebarManager.js';
 import { getStorageItem, setStorageItem } from '../utils/storageHelpers.js';
 import { translate } from '../utils/i18nHelpers.js';
+import { escapeHtml } from '../components/shared/utils.js';
 
 class MoveManager {
     constructor() {
@@ -218,6 +219,7 @@ class MoveManager {
     }
 
     updateTargetPath() {
+        this.clearDryRunPreview();
         const pathDisplay = document.getElementById('moveTargetPathDisplay');
         const modelRoot = document.getElementById('moveModelRoot').value;
         const apiClient = this._getApiClient();
@@ -247,6 +249,73 @@ class MoveManager {
         }
 
         pathDisplay.innerHTML = `<span class="path-text">${fullPath}</span>`;
+    }
+
+    clearDryRunPreview() {
+        const preview = document.getElementById('moveDryRunPreview');
+        if (preview) {
+            preview.hidden = true;
+            preview.innerHTML = '';
+        }
+    }
+
+    async previewMove() {
+        const selectedRoot = document.getElementById('moveModelRoot').value;
+        const apiClient = this._getApiClient();
+        if (!selectedRoot) {
+            showToast('toast.models.pleaseSelectRoot', {
+                type: apiClient.apiConfig.config.displayName.toLowerCase()
+            }, 'error');
+            return;
+        }
+
+        const targetFolder = this.useDefaultPath
+            ? ''
+            : this.folderTreeManager.getSelectedPath();
+        const targetPath = targetFolder
+            ? `${selectedRoot}/${targetFolder}`
+            : selectedRoot;
+        const filePaths = this.bulkFilePaths || [this.currentFilePath];
+
+        try {
+            const result = await apiClient.previewBulkMove(
+                filePaths, targetPath, this.useDefaultPath
+            );
+            this.renderDryRunPreview(result);
+        } catch (error) {
+            showToast('toast.models.movePreviewFailed', { message: error.message }, 'error');
+        }
+    }
+
+    renderDryRunPreview(result) {
+        const preview = document.getElementById('moveDryRunPreview');
+        if (!preview) return;
+
+        const entries = result.entries || [];
+        const rows = entries.map(entry => {
+            const destination = entry.destination_path || entry.error || '';
+            const flags = [entry.status];
+            if (entry.conflict) flags.push('conflict');
+            return `
+                <div class="move-dry-run-entry ${escapeHtml(entry.status)}">
+                    <span class="move-dry-run-source">${escapeHtml(entry.source_path)}</span>
+                    <i class="fas fa-arrow-right"></i>
+                    <span class="move-dry-run-destination">${escapeHtml(destination)}</span>
+                    <span class="move-dry-run-status">${escapeHtml(flags.join(', '))}</span>
+                </div>`;
+        }).join('');
+
+        preview.innerHTML = `
+            <div class="move-dry-run-summary">
+                ${escapeHtml(translate('modals.moveModel.dryRunSummary', {
+                    moves: result.move_count,
+                    unchanged: result.unchanged_count,
+                    conflicts: result.conflict_count,
+                    errors: result.error_count
+                }, `${result.move_count} moves, ${result.unchanged_count} unchanged, ${result.conflict_count} conflicts, ${result.error_count} errors`))}
+            </div>
+            <div class="move-dry-run-entries">${rows}</div>`;
+        preview.hidden = false;
     }
 
     /**

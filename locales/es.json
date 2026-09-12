@@ -1553,7 +1553,9 @@
             "browseFolders": "Explorar carpetas:",
             "createNewFolder": "Crear nueva carpeta",
             "pathPlaceholder": "Escribe la ruta de la carpeta o selecciona del árbol de abajo...",
-            "root": "Raíz"
+            "root": "Raíz",
+            "previewMove": "[TODO: Translate] Preview",
+            "dryRunSummary": "[TODO: Translate] {moves} moves, {unchanged} unchanged, {conflicts} conflicts, {errors} errors"
         },
         "linkHuggingFace": {
             "title": "Vincular a HuggingFace",
@@ -2310,6 +2312,7 @@
             "filenameCannotBeEmpty": "El nombre de archivo no puede estar vacío",
             "renameFailed": "Error al renombrar archivo: {message}",
             "moveFailed": "Error al mover modelo(s): {message}",
+            "movePreviewFailed": "[TODO: Translate] Failed to preview model move(s): {message}",
             "pleaseSelectRoot": "Por favor selecciona un directorio raíz de {type}",
             "nameTooLong": "El nombre del modelo está limitado a 100 caracteres",
             "verificationAlreadyDone": "Este grupo ya ha sido verificado",

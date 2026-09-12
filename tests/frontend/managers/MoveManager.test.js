@@ -63,6 +63,7 @@ describe('MoveManager', () => {
                     <div id="moveFolderTree"></div>
                 </div>
                 <div id="moveTargetPathDisplay"><span class="path-text"></span></div>
+                <div id="moveDryRunPreview" hidden></div>
             </div>
         `;
 
@@ -79,7 +80,19 @@ describe('MoveManager', () => {
             modelType: 'loras',
             fetchModelRoots: vi.fn().mockResolvedValue({ roots: ['/models/loras'] }),
             fetchUnifiedFolderTree: vi.fn().mockResolvedValue({ success: true, tree: {} }),
-            moveSingleModel: vi.fn().mockResolvedValue({ success: true })
+            moveSingleModel: vi.fn().mockResolvedValue({ success: true }),
+            previewBulkMove: vi.fn().mockResolvedValue({
+                move_count: 1,
+                unchanged_count: 0,
+                conflict_count: 0,
+                error_count: 0,
+                entries: [{
+                    source_path: '/models/loras/flux/my-lora.safetensors',
+                    destination_path: '/archive/SDXL/flux/my-lora.safetensors',
+                    status: 'move',
+                    conflict: false
+                }]
+            })
         };
         getModelApiClient.mockReturnValue(mockApiClient);
     });
@@ -136,6 +149,26 @@ describe('MoveManager', () => {
             '/models/loras/flux/my-lora.safetensors',
             '/models/loras/my/organized/folder',
             false
+        );
+    });
+
+    it('previews the resolved destinations without moving models', async () => {
+        moveManager.useDefaultPath = true;
+        moveManager.currentFilePath = '/models/loras/flux/my-lora.safetensors';
+        document.getElementById('moveModelRoot').innerHTML = '<option value="/archive">/archive</option>';
+        document.getElementById('moveModelRoot').value = '/archive';
+
+        await moveManager.previewMove();
+
+        expect(mockApiClient.previewBulkMove).toHaveBeenCalledWith(
+            ['/models/loras/flux/my-lora.safetensors'],
+            '/archive',
+            true
+        );
+        expect(mockApiClient.moveSingleModel).not.toHaveBeenCalled();
+        expect(document.getElementById('moveDryRunPreview').hidden).toBe(false);
+        expect(document.getElementById('moveDryRunPreview').textContent).toContain(
+            '/archive/SDXL/flux/my-lora.safetensors'
         );
     });
 

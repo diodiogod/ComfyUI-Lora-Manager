@@ -485,6 +485,100 @@ class ModelMoveService:
         """
         self.scanner = scanner
         self.model_type = model_type
+
+    async def _resolve_target_directory(
+        self, file_path: str, target_path: str, use_default_paths: bool
+    ) -> str:
+        """Resolve the destination directory without changing the filesystem."""
+        if not use_default_paths:
+            return target_path
+
+        cache = await self.scanner.get_cached_data()
+        model_data = next(
+            (model for model in cache.raw_data if model.get("file_path") == file_path),
+            None,
+        )
+        if not model_data:
+            return target_path
+
+        relative_path = calculate_relative_path_for_model(
+            model_data, self.model_type, self.scanner.get_model_roots()
+        )
+        if relative_path:
+            return os.path.join(target_path, relative_path).replace(os.sep, "/")
+        return target_path
+
+    async def preview_models_bulk(
+        self,
+        file_paths: List[str],
+        target_path: str,
+        use_default_paths: bool = False,
+    ) -> Dict[str, Any]:
+        """Return the exact move plan without creating folders or moving files."""
+        _require_path_in_library_roots(target_path, self.scanner, label="Target path")
+        entries = []
+        for file_path in file_paths:
+            try:
+                _require_path_in_library_roots(
+                    file_path, self.scanner, label="Source path"
+                )
+                target_directory = await self._resolve_target_directory(
+                    file_path, target_path, use_default_paths
+                )
+                source_name = os.path.basename(file_path)
+                same_directory = os.path.normcase(
+                    os.path.normpath(os.path.dirname(file_path))
+                ) == os.path.normcase(os.path.normpath(target_directory))
+                final_name = source_name
+                if not same_directory:
+                    from ..utils.models import BaseModelMetadata
+
+                    base_name, extension = os.path.splitext(source_name)
+                    hash_getter = getattr(self.scanner, "get_hash_by_path", None)
+                    final_name = BaseModelMetadata.generate_unique_filename(
+                        target_directory,
+                        base_name,
+                        extension,
+                        (lambda: hash_getter(file_path) or "")
+                        if callable(hash_getter)
+                        else None,
+                    )
+                destination = os.path.join(target_directory, final_name).replace(
+                    os.sep, "/"
+                )
+                entries.append(
+                    {
+                        "source_path": file_path,
+                        "destination_path": destination,
+                        "destination_directory": target_directory,
+                        "status": "unchanged" if same_directory else "move",
+                        "conflict": final_name != source_name,
+                    }
+                )
+            except Exception as exc:
+                entries.append(
+                    {
+                        "source_path": file_path,
+                        "destination_path": None,
+                        "destination_directory": None,
+                        "status": "error",
+                        "conflict": False,
+                        "error": str(exc),
+                    }
+                )
+
+        return {
+            "success": True,
+            "dry_run": True,
+            "total": len(entries),
+            "move_count": sum(entry["status"] == "move" for entry in entries),
+            "unchanged_count": sum(
+                entry["status"] == "unchanged" for entry in entries
+            ),
+            "error_count": sum(entry["status"] == "error" for entry in entries),
+            "conflict_count": sum(entry["conflict"] for entry in entries),
+            "entries": entries,
+        }
     
     async def move_model(self, file_path: str, target_path: str, use_default_paths: bool = False) -> Dict[str, Any]:
         """Move a single model file
@@ -501,25 +595,9 @@ class ModelMoveService:
             _require_path_in_library_roots(file_path, self.scanner, label="Source path")
             _require_path_in_library_roots(target_path, self.scanner, label="Target path")
 
-            if use_default_paths:
-                # Find the model in cache to get metadata
-                cache = await self.scanner.get_cached_data()
-                model_data = next((m for m in cache.raw_data if m.get('file_path') == file_path), None)
-                
-                if model_data:
-                    from ..utils.utils import calculate_relative_path_for_model
-                    relative_path = calculate_relative_path_for_model(
-                        model_data, self.model_type, self.scanner.get_model_roots()
-                    )
-                    if relative_path:
-                        target_path = os.path.join(target_path, relative_path).replace(os.sep, '/')
-                    elif not get_settings_manager().get_download_path_template(self.model_type):
-                        # Flat structure, target_path remains the root
-                        pass
-                    else:
-                        # Could not calculate relative path (e.g. missing metadata)
-                        # Fallback to manual target_path or skip?
-                        pass
+            target_path = await self._resolve_target_directory(
+                file_path, target_path, use_default_paths
+            )
 
             source_dir = os.path.dirname(file_path)
             if os.path.normpath(source_dir) == os.path.normpath(target_path):

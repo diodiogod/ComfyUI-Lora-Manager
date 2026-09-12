@@ -1553,7 +1553,9 @@
             "browseFolders": "浏览文件夹：",
             "createNewFolder": "新建文件夹",
             "pathPlaceholder": "输入文件夹路径或从下方树中选择...",
-            "root": "根目录"
+            "root": "根目录",
+            "previewMove": "[TODO: Translate] Preview",
+            "dryRunSummary": "[TODO: Translate] {moves} moves, {unchanged} unchanged, {conflicts} conflicts, {errors} errors"
         },
         "linkHuggingFace": {
             "title": "链接到 HuggingFace",
@@ -2310,6 +2312,7 @@
             "filenameCannotBeEmpty": "文件名不能为空",
             "renameFailed": "重命名文件失败：{message}",
             "moveFailed": "移动模型失败：{message}",
+            "movePreviewFailed": "[TODO: Translate] Failed to preview model move(s): {message}",
             "pleaseSelectRoot": "请选择 {type} 根目录",
             "nameTooLong": "模型名称最多100个字符",
             "verificationAlreadyDone": "此组已验证过",

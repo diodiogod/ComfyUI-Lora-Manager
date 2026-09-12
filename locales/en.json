@@ -1553,7 +1553,9 @@
       "browseFolders": "Browse Folders:",
       "createNewFolder": "Create new folder",
       "pathPlaceholder": "Type folder path or select from tree below...",
-      "root": "Root"
+      "root": "Root",
+      "previewMove": "Preview",
+      "dryRunSummary": "{moves} moves, {unchanged} unchanged, {conflicts} conflicts, {errors} errors"
     },
     "linkHuggingFace": {
       "title": "Link to HuggingFace",
@@ -2310,6 +2312,7 @@
       "filenameCannotBeEmpty": "File name cannot be empty",
       "renameFailed": "Failed to rename file: {message}",
       "moveFailed": "Failed to move model(s): {message}",
+      "movePreviewFailed": "Failed to preview model move(s): {message}",
       "pleaseSelectRoot": "Please select a {type} root directory",
       "nameTooLong": "Model name is limited to 100 characters",
       "verificationAlreadyDone": "This group has already been verified",

@@ -2508,6 +2508,24 @@ class ModelMoveHandler:
             self._logger.error("Error moving models in bulk: %s", exc, exc_info=True)
             return web.Response(text=str(exc), status=500)
 
+    async def preview_models_bulk(self, request: web.Request) -> web.Response:
+        try:
+            data = await request.json()
+            file_paths = data.get("file_paths", [])
+            target_path = data.get("target_path")
+            use_default_paths = data.get("use_default_paths", False)
+            if not file_paths or not target_path:
+                return web.Response(
+                    text="File paths and target path are required", status=400
+                )
+            result = await self._move_service.preview_models_bulk(
+                file_paths, target_path, use_default_paths=use_default_paths
+            )
+            return web.json_response(result)
+        except Exception as exc:
+            self._logger.error("Error previewing model moves: %s", exc, exc_info=True)
+            return web.Response(text=str(exc), status=500)
+
 
 class ModelAutoOrganizeHandler:
     """Manage auto-organize operations."""
@@ -3417,6 +3435,7 @@ class ModelHandlerSet:
             "get_civitai_model_by_hash": self.civitai.get_civitai_model_by_hash,
             "move_model": self.move.move_model,
             "move_models_bulk": self.move.move_models_bulk,
+            "preview_models_bulk": self.move.preview_models_bulk,
             "auto_organize_models": self.auto_organize.auto_organize_models,
             "get_auto_organize_progress": self.auto_organize.get_auto_organize_progress,
             "get_model_notes": self.query.get_model_notes,

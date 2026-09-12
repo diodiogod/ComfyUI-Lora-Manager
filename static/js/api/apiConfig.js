@@ -69,6 +69,7 @@ export function getApiEndpoints(modelType) {
         // Move operations (now common for all model types that support move)
         moveModel: `/api/lm/${modelType}/move_model`,
         moveBulk: `/api/lm/${modelType}/move_models_bulk`,
+        movePreview: `/api/lm/${modelType}/move_models_preview`,
 
         // CivitAI integration
         fetchCivitai: `/api/lm/${modelType}/fetch-civitai`,

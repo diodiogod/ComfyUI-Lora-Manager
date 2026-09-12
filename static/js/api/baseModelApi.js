@@ -1702,6 +1702,23 @@ export class BaseModelApiClient {
         }
     }
 
+    async previewBulkMove(filePaths, targetPath, useDefaultPaths = false) {
+        const response = await fetch(this.apiConfig.endpoints.movePreview, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                file_paths: filePaths,
+                target_path: targetPath,
+                use_default_paths: useDefaultPaths
+            })
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to preview model moves');
+        }
+        return result;
+    }
+
     async bulkDeleteModels(filePaths) {
         if (!filePaths || filePaths.length === 0) {
             throw new Error('No file paths provided');

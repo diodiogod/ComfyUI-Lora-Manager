@@ -61,10 +61,12 @@
                     </div>
                 </div>
             </div>
+            <div id="moveDryRunPreview" class="move-dry-run-preview" hidden></div>
         </div>
         <div class="modal-actions">
             <button class="cancel-btn" onclick="modalManager.closeModal('moveModal')">{{ t('common.actions.cancel')
                 }}</button>
+            <button class="secondary-btn" onclick="moveManager.previewMove()">{{ t('modals.moveModel.previewMove') }}</button>
             <button class="primary-btn" onclick="moveManager.moveModel()">{{ t('common.actions.move') }}</button>
         </div>
     </div>

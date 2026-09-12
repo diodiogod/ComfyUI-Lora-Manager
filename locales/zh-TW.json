@@ -1553,7 +1553,9 @@
             "browseFolders": "瀏覽資料夾：",
             "createNewFolder": "建立新資料夾",
             "pathPlaceholder": "輸入資料夾路徑或從下方樹狀結構選擇...",
-            "root": "根目錄"
+            "root": "根目錄",
+            "previewMove": "[TODO: Translate] Preview",
+            "dryRunSummary": "[TODO: Translate] {moves} moves, {unchanged} unchanged, {conflicts} conflicts, {errors} errors"
         },
         "linkHuggingFace": {
             "title": "連結到 HuggingFace",
@@ -2310,6 +2312,7 @@
             "filenameCannotBeEmpty": "檔案名稱不可為空",
             "renameFailed": "重新命名檔案失敗：{message}",
             "moveFailed": "移動模型失敗：{message}",
+            "movePreviewFailed": "[TODO: Translate] Failed to preview model move(s): {message}",
             "pleaseSelectRoot": "請選擇 {type} 根目錄",
             "nameTooLong": "模型名稱限 100 字元以內",
             "verificationAlreadyDone": "此群組已驗證過",

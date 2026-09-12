@@ -172,6 +172,42 @@ body.modal-open {
     padding: var(--space-2);
 }
 
+.move-dry-run-preview {
+    margin-top: 1rem;
+    max-height: 18rem;
+    overflow: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.75rem;
+}
+
+.move-dry-run-summary {
+    position: sticky;
+    top: 0;
+    padding-bottom: 0.5rem;
+    background: var(--bg-color);
+    font-weight: 600;
+}
+
+.move-dry-run-entry {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) auto minmax(12rem, 1fr) auto;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.8rem;
+}
+
+.move-dry-run-source,
+.move-dry-run-destination {
+    overflow-wrap: anywhere;
+}
+
+.move-dry-run-status {
+    color: var(--text-muted);
+}
+
 /* Dark theme unified styles */
 [data-theme="dark"] .modal-content {
     background: var(--lora-surface);

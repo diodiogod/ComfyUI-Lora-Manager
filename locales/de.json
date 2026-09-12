@@ -1553,7 +1553,9 @@
             "browseFolders": "Ordner durchsuchen:",
             "createNewFolder": "Neuen Ordner erstellen",
             "pathPlaceholder": "Ordnerpfad eingeben oder aus Baum unten auswählen...",
-            "root": "Stammverzeichnis"
+            "root": "Stammverzeichnis",
+            "previewMove": "[TODO: Translate] Preview",
+            "dryRunSummary": "[TODO: Translate] {moves} moves, {unchanged} unchanged, {conflicts} conflicts, {errors} errors"
         },
         "linkHuggingFace": {
             "title": "Mit HuggingFace verknüpfen",
@@ -2310,6 +2312,7 @@
             "filenameCannotBeEmpty": "Dateiname darf nicht leer sein",
             "renameFailed": "Fehler beim Umbenennen der Datei: {message}",
             "moveFailed": "Fehler beim Verschieben der Modell(e): {message}",
+            "movePreviewFailed": "[TODO: Translate] Failed to preview model move(s): {message}",
             "pleaseSelectRoot": "Bitte wählen Sie ein {type}-Stammverzeichnis aus",
             "nameTooLong": "Modellname ist auf 100 Zeichen begrenzt",
             "verificationAlreadyDone": "Diese Gruppe wurde bereits verifiziert",

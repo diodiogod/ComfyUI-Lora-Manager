@@ -40,6 +40,7 @@ COMMON_ROUTE_DEFINITIONS: tuple[RouteDefinition, ...] = (
     RouteDefinition("POST", "/api/lm/{prefix}/verify-duplicates", "verify_duplicates"),
     RouteDefinition("POST", "/api/lm/{prefix}/move_model", "move_model"),
     RouteDefinition("POST", "/api/lm/{prefix}/move_models_bulk", "move_models_bulk"),
+    RouteDefinition("POST", "/api/lm/{prefix}/move_models_preview", "preview_models_bulk"),
     RouteDefinition("GET", "/api/lm/{prefix}/auto-organize", "auto_organize_models"),
     RouteDefinition("POST", "/api/lm/{prefix}/auto-organize", "auto_organize_models"),
     RouteDefinition(

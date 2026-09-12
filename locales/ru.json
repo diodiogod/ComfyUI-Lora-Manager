@@ -1553,7 +1553,9 @@
             "browseFolders": "Обзор папок:",
             "createNewFolder": "Создать новую папку",
             "pathPlaceholder": "Введите путь к папке или выберите из дерева ниже...",
-            "root": "Корень"
+            "root": "Корень",
+            "previewMove": "[TODO: Translate] Preview",
+            "dryRunSummary": "[TODO: Translate] {moves} moves, {unchanged} unchanged, {conflicts} conflicts, {errors} errors"
         },
         "linkHuggingFace": {
             "title": "Связать с HuggingFace",
@@ -2310,6 +2312,7 @@
             "filenameCannotBeEmpty": "Имя файла не может быть пустым",
             "renameFailed": "Не удалось переименовать файл: {message}",
             "moveFailed": "Не удалось переместить модель(и): {message}",
+            "movePreviewFailed": "[TODO: Translate] Failed to preview model move(s): {message}",
             "pleaseSelectRoot": "Пожалуйста, выберите корневую папку {type}",
             "nameTooLong": "Название модели ограничено 100 символами",
             "verificationAlreadyDone": "Эта группа уже была проверена",

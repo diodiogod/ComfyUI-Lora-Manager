@@ -762,6 +762,60 @@ def test_auto_organize_conflict_when_running(mock_service):
     asyncio.run(scenario())
 
 
+def test_move_preview_route_is_read_only(
+    mock_service, monkeypatch: pytest.MonkeyPatch
+):
+    calls = []
+
+    async def fake_preview(
+        self, file_paths, target_path, use_default_paths=False
+    ):
+        calls.append((file_paths, target_path, use_default_paths))
+        return {
+            "success": True,
+            "dry_run": True,
+            "total": 1,
+            "move_count": 1,
+            "unchanged_count": 0,
+            "conflict_count": 0,
+            "error_count": 0,
+            "entries": [],
+        }
+
+    monkeypatch.setattr(
+        model_file_service.ModelMoveService,
+        "preview_models_bulk",
+        fake_preview,
+    )
+
+    async def scenario():
+        client = await create_test_client(mock_service)
+        try:
+            response = await client.post(
+                "/api/lm/test-models/move_models_preview",
+                json={
+                    "file_paths": ["/models/source/model.safetensors"],
+                    "target_path": "/models/archive",
+                    "use_default_paths": True,
+                },
+            )
+            payload = await response.json()
+
+            assert response.status == 200
+            assert payload["dry_run"] is True
+            assert calls == [
+                (
+                    ["/models/source/model.safetensors"],
+                    "/models/archive",
+                    True,
+                )
+            ]
+        finally:
+            await client.close()
+
+    asyncio.run(scenario())
+
+
 
 def test_download_model_returns_skipped_success(mock_service, download_manager_stub):
     async def scenario():
